@@ -51,6 +51,7 @@ const theme = {
 	centerPoint2: '#333',
 	rays1: '#FBB',
 	rays2: '#6AA',
+	object: '#09c',
 };
 
 const ctxS = {
@@ -167,15 +168,14 @@ function refreshCanvas() {
 	ctx.restore();
 
 	telescope();
-	rays();
-	images();
+	let [objectPos, image1Pos, image2Pos] = rays();
+	images(objectPos, image1Pos, image2Pos);
 }
 
 function telescope() {
 	/* ~~~ SECTION 1: COMPONENTS OF THE TELESCOPE ~~~ */
 	// draw horizon
-	ctxS.stroke([-10000, 0], [[10000, 0]], 0.2 * cOunit, '#000')
-
+	ctxS.stroke([-10000, 0], [[10000, 0]], 0.2 * cOunit, '#000');
 
 	// draw first lens
 	ctxS.stroke(
@@ -297,11 +297,23 @@ function rays() {
 	);
 	ctxS.stroke([35 * cWper, image2Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
 
-	// end
+	return [objectPos, image1Pos, image2Pos];
 }
 
-function images() {
+function images(objectPos, image1Pos, image2Pos) {
 	/* ~~~ SECTION 3: IMAGES OF THE OBJECT CREATED BY THE TWO LENSES ~~~ */
+	[objectPos, image1Pos, image2Pos].forEach((el, i) => {
+		ctxS.stroke(
+			[(el[0] - 1.5) * cWper, el[1] * cHper + 2 * cWper * (el[1] < 0 ? 1 : -1)],
+			[
+				[el[0] * cWper, el[1] * cHper],
+				[(el[0] + 1.5) * cWper, el[1] * cHper + 2 * cWper * (el[1] < 0 ? 1 : -1)],
+			],
+			cOunit,
+			theme.object + (i == 2 ? '' : '5')
+		);
+		ctxS.stroke([el[0] * cWper, el[1] * cHper], [[el[0] * cWper, 0]], cOunit, theme.object + (i == 2 ? '' : '5'));
+	});
 }
 
 refreshCanvas();
