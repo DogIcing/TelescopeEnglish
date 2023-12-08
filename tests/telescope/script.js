@@ -49,23 +49,24 @@ const theme = {
 	lens2: '#666',
 	focalPoint2: '#666',
 	centerPoint2: '#333',
-	rays: '#FBB',
+	rays1: '#FBB',
+	rays2: '#6AA',
 };
 
 const ctxS = {
-	stroke: (startPoint, pointsArr, lineWidth, strokeStyle = undefined, doFill = false) => {
+	stroke: (startPoint, pointsArr, lineWidth, strokeStyle, lineDash = []) => {
 		ctx.lineCap = 'round';
 		ctx.lineJoin = 'round';
 
 		ctx.lineWidth = Math.max(lineWidth * zoom, 1);
-		if (strokeStyle !== undefined) ctx.strokeStyle = strokeStyle;
+		ctx.strokeStyle = strokeStyle;
+		ctx.setLineDash(lineDash);
 		ctx.beginPath();
 		ctx.moveTo(startPoint[0] * zoom, startPoint[1] * zoom);
 		pointsArr.forEach((point) => {
 			ctx.lineTo(point[0] * zoom, point[1] * zoom);
 		});
 		ctx.stroke();
-		if (doFill) ctx.fill();
 	},
 	fillCirc: (x, y, r, fillStyle) => {
 		ctx.fillStyle = fillStyle;
@@ -172,6 +173,10 @@ function refreshCanvas() {
 
 function telescope() {
 	/* ~~~ SECTION 1: COMPONENTS OF THE TELESCOPE ~~~ */
+	// draw horizon
+	ctxS.stroke([-10000, 0], [[10000, 0]], 0.2 * cOunit, '#000')
+
+
 	// draw first lens
 	ctxS.stroke(
 		[(35 - qa.d_main - 3) * cWper, -40 * cHper + 3 * cWper],
@@ -235,12 +240,13 @@ function telescope() {
 
 function rays() {
 	/* ~~~ SECTION 2: RAYS COMING FROM THE OBSERVED OBJECT ~~~ */
-	const objectPos = [35 - qa.d_main - qa.d_o * 100, -qa.ho];
-	const di = (qa.d_o * 100 * qa.lf1) / (qa.d_o * 100 - qa.lf1);
-	const image1Pos = [di + (35 - qa.d_main), (qa.ho * di) / (qa.d_o * 100)];
 
+	// FIRST GROUP OF PRINCIPLE RAYS
+	const objectPos = [35 - qa.d_main - qa.d_o * 100, -qa.ho];
+	const di1 = (qa.d_o * 100 * qa.lf1) / (qa.d_o * 100 - qa.lf1);
+	const image1Pos = [di1 + (35 - qa.d_main), (qa.ho * di1) / (qa.d_o * 100)];
 	// first principle ray
-	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[image1Pos[0] * cWper, image1Pos[1] * cHper]], 0.25 * cOunit, theme.rays);
+	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[image1Pos[0] * cWper, image1Pos[1] * cHper]], 0.25 * cOunit, theme.rays1);
 	// second principle ray
 	ctxS.stroke(
 		[objectPos[0] * cWper, objectPos[1] * cHper],
@@ -249,7 +255,7 @@ function rays() {
 			[image1Pos[0] * cWper, image1Pos[1] * cHper],
 		],
 		0.25 * cOunit,
-		theme.rays
+		theme.rays1
 	);
 	// third principle ray
 	ctxS.stroke(
@@ -259,8 +265,37 @@ function rays() {
 			[image1Pos[0] * cWper, image1Pos[1] * cHper],
 		],
 		0.25 * cOunit,
-		theme.rays
+		theme.rays1
 	);
+
+	// SECOND GROUP OF PRINCIPLE RAYS
+	const di2 = ((qa.d_main - di1) * qa.lf2) / (qa.d_main - di1 - qa.lf2);
+	const image2Pos = [di2 + 35, -(image1Pos[1] * di2) / (qa.d_main - di1)];
+	// first principle ray
+	ctxS.stroke([image1Pos[0] * cWper, image1Pos[1] * cHper], [[(image1Pos[0] + 100 * Math.abs(image1Pos[0] - image2Pos[0])) * cWper, (image1Pos[1] - 100 * Math.abs(image1Pos[1] - image2Pos[1])) * cHper]], 0.25 * cOunit, theme.rays2);
+	ctxS.stroke([image1Pos[0] * cWper, image1Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
+	// second principle ray
+	ctxS.stroke(
+		[image1Pos[0] * cWper, image1Pos[1] * cHper],
+		[
+			[35 * cWper, image1Pos[1] * cHper],
+			[(image1Pos[0] + 100 * Math.abs(35 - image2Pos[0])) * cWper, (image1Pos[1] - 100 * Math.abs(image1Pos[1] - image2Pos[1])) * cHper],
+		],
+		0.25 * cOunit,
+		theme.rays2
+	);
+	ctxS.stroke([35 * cWper, image1Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
+	// third principle ray
+	ctxS.stroke(
+		[image1Pos[0] * cWper, image1Pos[1] * cHper],
+		[
+			[35 * cWper, image2Pos[1] * cHper],
+			[1000 * cWper, image2Pos[1] * cHper],
+		],
+		0.25 * cOunit,
+		theme.rays2
+	);
+	ctxS.stroke([35 * cWper, image2Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
 
 	// end
 }
