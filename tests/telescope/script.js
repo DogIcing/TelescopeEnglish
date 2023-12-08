@@ -15,6 +15,11 @@ const outputs = {
 	lf1: document.getElementById('lf1-out'),
 	lf2: document.getElementById('lf2-out'),
 };
+const chart = {
+	oi: document.getElementById('oi-out'),
+	hi: document.getElementById('hi-out'),
+	gr: document.getElementById('gr-out'),
+};
 const qa = {
 	ho: sliders.ho.value,
 	d_o: sliders.d_o.value,
@@ -147,15 +152,6 @@ canvas.addEventListener(
 	},
 	{ passive: true }
 );
-/*
-canvas.addEventListener('touchmove', function (event) {
-	if (event.targetTouches.length == 2) {
-		//console.log(event);
-		addEventListener('touchend', () => {
-			console.log(123);
-		});
-	}
-});
 
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
@@ -170,6 +166,8 @@ function refreshCanvas() {
 	telescope();
 	let [objectPos, image1Pos, image2Pos] = rays();
 	images(objectPos, image1Pos, image2Pos);
+
+	updateResultsChart(objectPos, image1Pos, image2Pos);
 }
 
 function telescope() {
@@ -267,7 +265,6 @@ function rays() {
 	} else {
 		const m = (image1Pos.y * cHper - objectPos.y * cHper) / (image1Pos.x * cWper - (35 - qa.d_main) * cWper);
 		const h = image1Pos.x * cWper - (image1Pos.y * cHper) / m;
-		console.log(h);
 
 		ctxS.stroke(
 			[objectPos.x * cWper, objectPos.y * cHper],
@@ -333,7 +330,7 @@ function rays() {
 		);
 		ctxS.stroke([35 * cWper, image2Pos.y * cHper], [[image2Pos.x * cWper, image2Pos.y * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
 
-		return [objectPos, image1Pos, image2Pos];
+		return [objectPos, image2Pos];
 	}
 
 	return [objectPos];
@@ -355,6 +352,20 @@ function images(objectPos, image1Pos, image2Pos) {
 			ctxS.stroke([el.x * cWper, el.y * cHper], [[el.x * cWper, 0]], cOunit, theme.object + (i == 2 ? '' : '5'));
 		}
 	});
+}
+
+function updateResultsChart(objectPos, image2Pos) {
+	if (image2Pos !== undefined) {
+		chart.oi.innerHTML = Math.abs(image2Pos.x - 35).toFixed(2);
+		chart.hi.innerHTML = Math.abs(image2Pos.y).toFixed(2);
+
+		const beta = (image2Pos.y * (objectPos.x - 35)) / (image2Pos.x - 35);
+		chart.gr.innerHTML = (Math.abs(beta / objectPos.y) * (Math.sign(image2Pos.y * objectPos.y))).toFixed(2);
+	} else {
+		chart.oi.innerHTML = '- ';
+		chart.hi.innerHTML = '- ';
+		chart.gr.innerHTML = '- ';
+	}
 }
 
 refreshCanvas();
