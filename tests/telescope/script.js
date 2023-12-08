@@ -136,11 +136,11 @@ canvas.addEventListener('touchstart', (e) => {
 			removeEventListener('touchmove', onTouchMove);
 			removeEventListener('touchend', onTouchEnd);
 		}
-		
+
 		addEventListener('touchmove', onTouchMove);
 		addEventListener('touchend', onTouchEnd);
 	}
-});
+}, { passive: true });
 /*
 canvas.addEventListener('touchmove', function (event) {
 	if (event.targetTouches.length == 2) {
