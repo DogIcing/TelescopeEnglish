@@ -242,77 +242,118 @@ function rays() {
 	/* ~~~ SECTION 2: RAYS COMING FROM THE OBSERVED OBJECT ~~~ */
 
 	// FIRST GROUP OF PRINCIPLE RAYS
-	const objectPos = [35 - qa.d_main - qa.d_o * 100, -qa.ho];
+	const objectPos = { x: 35 - qa.d_main - qa.d_o * 100, y: -qa.ho };
 	const di1 = (qa.d_o * 100 * qa.lf1) / (qa.d_o * 100 - qa.lf1);
-	const image1Pos = [di1 + (35 - qa.d_main), (qa.ho * di1) / (qa.d_o * 100)];
+	const image1Pos = { x: di1 + (35 - qa.d_main), y: (qa.ho * di1) / (qa.d_o * 100) };
+	const isBetween = image1Pos.x < 35;
 	// first principle ray
-	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[image1Pos[0] * cWper, image1Pos[1] * cHper]], 0.25 * cOunit, theme.rays1);
+	if (isBetween) {
+		ctxS.stroke([objectPos.x * cWper, objectPos.y * cHper], [[image1Pos.x * cWper, image1Pos.y * cHper]], 0.25 * cOunit, theme.rays1);
+	} else {
+		const m = (image1Pos.y * cHper - objectPos.y * cHper) / (image1Pos.x * cWper - objectPos.x * cWper);
+		ctxS.stroke([objectPos.x * cWper, objectPos.y * cHper], [[35 * cWper, qa.d_main * cWper * m]], 0.25 * cOunit, theme.rays1);
+	}
 	// second principle ray
-	ctxS.stroke(
-		[objectPos[0] * cWper, objectPos[1] * cHper],
-		[
-			[(35 - qa.d_main) * cWper, objectPos[1] * cHper],
-			[image1Pos[0] * cWper, image1Pos[1] * cHper],
-		],
-		0.25 * cOunit,
-		theme.rays1
-	);
+	if (isBetween) {
+		ctxS.stroke(
+			[objectPos.x * cWper, objectPos.y * cHper],
+			[
+				[(35 - qa.d_main) * cWper, objectPos.y * cHper],
+				[image1Pos.x * cWper, image1Pos.y * cHper],
+			],
+			0.25 * cOunit,
+			theme.rays1
+		);
+	} else {
+		const m = (image1Pos.y * cHper - objectPos.y * cHper) / (image1Pos.x * cWper - (35 - qa.d_main) * cWper);
+		const h = image1Pos.x * cWper - (image1Pos.y * cHper) / m;
+		console.log(h);
+
+		ctxS.stroke(
+			[objectPos.x * cWper, objectPos.y * cHper],
+			[
+				[(35 - qa.d_main) * cWper, objectPos.y * cHper],
+				[35 * cWper, (35 * cWper - h) * m],
+			],
+			0.25 * cOunit,
+			theme.rays1
+		);
+	}
 	// third principle ray
-	ctxS.stroke(
-		[objectPos[0] * cWper, objectPos[1] * cHper],
-		[
-			[(35 - qa.d_main) * cWper, image1Pos[1] * cHper],
-			[image1Pos[0] * cWper, image1Pos[1] * cHper],
-		],
-		0.25 * cOunit,
-		theme.rays1
-	);
+	if (isBetween) {
+		ctxS.stroke(
+			[objectPos.x * cWper, objectPos.y * cHper],
+			[
+				[(35 - qa.d_main) * cWper, image1Pos.y * cHper],
+				[image1Pos.x * cWper, image1Pos.y * cHper],
+			],
+			0.25 * cOunit,
+			theme.rays1
+		);
+	} else {
+		ctxS.stroke(
+			[objectPos.x * cWper, objectPos.y * cHper],
+			[
+				[(35 - qa.d_main) * cWper, image1Pos.y * cHper],
+				[35 * cWper, image1Pos.y * cHper],
+			],
+			0.25 * cOunit,
+			theme.rays1
+		);
+	}
 
 	// SECOND GROUP OF PRINCIPLE RAYS
-	const di2 = ((qa.d_main - di1) * qa.lf2) / (qa.d_main - di1 - qa.lf2);
-	const image2Pos = [di2 + 35, -(image1Pos[1] * di2) / (qa.d_main - di1)];
-	// first principle ray
-	ctxS.stroke([image1Pos[0] * cWper, image1Pos[1] * cHper], [[(image1Pos[0] + 100 * Math.abs(image1Pos[0] - image2Pos[0])) * cWper, (image1Pos[1] - 100 * Math.abs(image1Pos[1] - image2Pos[1])) * cHper]], 0.25 * cOunit, theme.rays2);
-	ctxS.stroke([image1Pos[0] * cWper, image1Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
-	// second principle ray
-	ctxS.stroke(
-		[image1Pos[0] * cWper, image1Pos[1] * cHper],
-		[
-			[35 * cWper, image1Pos[1] * cHper],
-			[(image1Pos[0] + 100 * Math.abs(35 - image2Pos[0])) * cWper, (image1Pos[1] - 100 * Math.abs(image1Pos[1] - image2Pos[1])) * cHper],
-		],
-		0.25 * cOunit,
-		theme.rays2
-	);
-	ctxS.stroke([35 * cWper, image1Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
-	// third principle ray
-	ctxS.stroke(
-		[image1Pos[0] * cWper, image1Pos[1] * cHper],
-		[
-			[35 * cWper, image2Pos[1] * cHper],
-			[1000 * cWper, image2Pos[1] * cHper],
-		],
-		0.25 * cOunit,
-		theme.rays2
-	);
-	ctxS.stroke([35 * cWper, image2Pos[1] * cHper], [[image2Pos[0] * cWper, image2Pos[1] * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
+	if (isBetween) {
+		// only draw if first image is between the first and second lens
+		const di2 = ((qa.d_main - di1) * qa.lf2) / (qa.d_main - di1 - qa.lf2);
+		const image2Pos = { x: di2 + 35, y: -(image1Pos.y * di2) / (qa.d_main - di1) };
+		// first principle ray
+		ctxS.stroke([image1Pos.x * cWper, image1Pos.y * cHper], [[(image1Pos.x + 100 * Math.abs(image1Pos.x - image2Pos.x)) * cWper, (image1Pos.y - 100 * Math.abs(image1Pos.y - image2Pos.y)) * cHper]], 0.25 * cOunit, theme.rays2);
+		ctxS.stroke([image1Pos.x * cWper, image1Pos.y * cHper], [[image2Pos.x * cWper, image2Pos.y * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
+		// second principle ray
+		ctxS.stroke(
+			[image1Pos.x * cWper, image1Pos.y * cHper],
+			[
+				[35 * cWper, image1Pos.y * cHper],
+				[(image1Pos.x + 100 * Math.abs(35 - image2Pos.x)) * cWper, (image1Pos.y - 100 * Math.abs(image1Pos.y - image2Pos.y)) * cHper],
+			],
+			0.25 * cOunit,
+			theme.rays2
+		);
+		ctxS.stroke([35 * cWper, image1Pos.y * cHper], [[image2Pos.x * cWper, image2Pos.y * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
+		// third principle ray
+		ctxS.stroke(
+			[image1Pos.x * cWper, image1Pos.y * cHper],
+			[
+				[35 * cWper, image2Pos.y * cHper],
+				[1000 * cWper, image2Pos.y * cHper],
+			],
+			0.25 * cOunit,
+			theme.rays2
+		);
+		ctxS.stroke([35 * cWper, image2Pos.y * cHper], [[image2Pos.x * cWper, image2Pos.y * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
 
-	return [objectPos, image1Pos, image2Pos];
+		return [objectPos, image1Pos, image2Pos];
+	}
+
+	return [objectPos];
 }
 
 function images(objectPos, image1Pos, image2Pos) {
 	/* ~~~ SECTION 3: IMAGES OF THE OBJECT CREATED BY THE TWO LENSES ~~~ */
 	[objectPos, image1Pos, image2Pos].forEach((el, i) => {
-		ctxS.stroke(
-			[(el[0] - 1.5) * cWper, el[1] * cHper + 2 * cWper * (el[1] < 0 ? 1 : -1)],
-			[
-				[el[0] * cWper, el[1] * cHper],
-				[(el[0] + 1.5) * cWper, el[1] * cHper + 2 * cWper * (el[1] < 0 ? 1 : -1)],
-			],
-			cOunit,
-			theme.object + (i == 2 ? '' : '5')
-		);
-		ctxS.stroke([el[0] * cWper, el[1] * cHper], [[el[0] * cWper, 0]], cOunit, theme.object + (i == 2 ? '' : '5'));
+		if (el !== undefined) {
+			ctxS.stroke(
+				[(el.x - 1.5) * cWper, el.y * cHper + 2 * cWper * (el.y < 0 ? 1 : -1)],
+				[
+					[el.x * cWper, el.y * cHper],
+					[(el.x + 1.5) * cWper, el.y * cHper + 2 * cWper * (el.y < 0 ? 1 : -1)],
+				],
+				cOunit,
+				theme.object + (i == 2 ? '' : '5')
+			);
+			ctxS.stroke([el.x * cWper, el.y * cHper], [[el.x * cWper, 0]], cOunit, theme.object + (i == 2 ? '' : '5'));
+		}
 	});
 }
 
