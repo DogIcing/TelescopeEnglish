@@ -25,17 +25,29 @@
 				width: 60%;
 				border: 2px dashed #ddf;
 				border-radius: 2px;
+				margin: 0 auto 10px auto;
 			}
 
 			.slider {
 				margin: auto 4px;
 			}
+			#mo {
+				margin: 0 10px;
+			}
 		</style>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
 	</head>
 	<body>
 		<canvas>it looks like your browser does not support HTML5 yet.</canvas>
 		<div id="mo">
 			<hr />
+			<div>
+				<div>
+					<span>Taille (hauteur) de <b>l'objet</b>:</span>
+				</div>
+				<input class="slider" id="ho" type="range" min="30" max="250" value="150" step="1" class="slider" />
+				<span id="ho-out"></span><span>cm</span>
+			</div>
 			<div>
 				<div>
 					<span>Distance entre <b>l'objet</b> et <b>le téléscope</b>:</span>

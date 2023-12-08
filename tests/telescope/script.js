@@ -2,23 +2,27 @@
 console.clear();
 
 const sliders = {
+	ho: document.getElementById('ho'),
 	d_o: document.getElementById('d_o'),
 	d_main: document.getElementById('d_main'),
 	lf1: document.getElementById('lf1'),
 	lf2: document.getElementById('lf2'),
 };
 const outputs = {
+	ho: document.getElementById('ho-out'),
 	d_o: document.getElementById('d_o-out'),
 	d_main: document.getElementById('d_main-out'),
 	lf1: document.getElementById('lf1-out'),
 	lf2: document.getElementById('lf2-out'),
 };
 const qa = {
+	ho: sliders.ho.value,
 	d_o: sliders.d_o.value,
 	d_main: sliders.d_main.value,
 	lf1: sliders.lf1.value,
 	lf2: sliders.lf2.value,
 };
+outputs.ho.innerHTML = qa.ho;
 outputs.d_o.innerHTML = qa.d_o;
 outputs.d_main.innerHTML = qa.d_main;
 outputs.lf1.innerHTML = qa.lf1;
@@ -27,7 +31,8 @@ outputs.lf2.innerHTML = qa.lf2;
 for (const [key, el] of Object.entries(sliders)) {
 	el.oninput = () => {
 		outputs[key].innerHTML = el.value;
-		qa[key] = el.value;
+		if (key !== 'ho') qa[key] = el.value;
+		else qa[key] = (el.value * cWper) / cHper;
 
 		requestAnimationFrame(refreshCanvas);
 	};
@@ -40,8 +45,11 @@ for (const [key, el] of Object.entries(sliders)) {
 const theme = {
 	lens1: '#AAA',
 	focalPoint1: '#AAA',
+	centerPoint1: '#777',
 	lens2: '#666',
 	focalPoint2: '#666',
+	centerPoint2: '#333',
+	rays: '#FBB',
 };
 
 const ctxS = {
@@ -49,12 +57,12 @@ const ctxS = {
 		ctx.lineCap = 'round';
 		ctx.lineJoin = 'round';
 
-		ctx.lineWidth = lineWidth;
+		ctx.lineWidth = Math.max(lineWidth * zoom, 1);
 		if (strokeStyle !== undefined) ctx.strokeStyle = strokeStyle;
 		ctx.beginPath();
-		ctx.moveTo(startPoint[0], startPoint[1]);
+		ctx.moveTo(startPoint[0] * zoom, startPoint[1] * zoom);
 		pointsArr.forEach((point) => {
-			ctx.lineTo(point[0], point[1]);
+			ctx.lineTo(point[0] * zoom, point[1] * zoom);
 		});
 		ctx.stroke();
 		if (doFill) ctx.fill();
@@ -63,15 +71,15 @@ const ctxS = {
 		ctx.fillStyle = fillStyle;
 		ctx.lineWidth = 0;
 		ctx.beginPath();
-		ctx.arc(x, y, r, 0, Math.PI * 2, false);
+		ctx.arc(x * zoom, y * zoom, r * zoom, 0, Math.PI * 2, false);
 		ctx.fill();
 	},
 	fillText: (text = 'DEFAULT TEXT', fillStyle = '#000', fontSize = 36, x = 0, y = 0) => {
-		ctx.font = `${fontSize}px Commissioner`;
+		ctx.font = `${fontSize * zoom}px Commissioner`;
 		ctx.fillStyle = fillStyle;
 
 		let boundingBox = ctx.measureText(text);
-		ctx.fillText(text, x - boundingBox.width / 2, y + boundingBox.actualBoundingBoxAscent + boundingBox.actualBoundingBoxDescent);
+		ctx.fillText(text, (x - boundingBox.width / 2) * zoom, (y + boundingBox.actualBoundingBoxAscent + boundingBox.actualBoundingBoxDescent) * zoom);
 	},
 };
 
@@ -83,7 +91,7 @@ const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
 const cWper = innerWidth / 100;
-const cHper = 0.5 * innerHeight / 100;
+const cHper = Math.max(innerHeight - document.getElementById('mo').offsetHeight - 40, innerWidth / 3) / 100;
 const cOunit = cWper * 0.7;
 
 canvas.style.width = innerWidth - 20 + 'px';
@@ -94,75 +102,109 @@ canvas.width = cWper * 100 * dpi;
 canvas.height = cHper * 100 * dpi;
 
 ctx.scale(dpi, dpi);
+ctx.translate(cWper * 50, cHper * 50);
 
-
-
+let zoom = 1;
+canvas.addEventListener('wheel', (e) => {
+	zoom -= 0.1 * Math.sign(e.deltaY);
+	zoom = Math.min(Math.max(0.1, zoom), 1.5);
+	refreshCanvas();
+}, { passive: true});
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
 
 function refreshCanvas() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.save();
+	ctx.translate(-cWper * 50, -cHper * 50);
+	ctx.clearRect(0, 0, cWper * 100, cHper * 100);
+	ctx.restore();
 
+	telescope();
+	rays();
+	images();
+}
+
+function telescope() {
 	/* ~~~ SECTION 1: COMPONENTS OF THE TELESCOPE ~~~ */
 	// draw first lens
 	ctxS.stroke(
-		[(85 - qa.d_main - 3) * cWper, 10 * cHper + 3 * cWper],
+		[(35 - qa.d_main - 3) * cWper, -40 * cHper + 3 * cWper],
 		[
-			[(85 - qa.d_main) * cWper, 10 * cHper],
-			[(85 - qa.d_main + 3) * cWper, 10 * cHper + 3 * cWper],
+			[(35 - qa.d_main) * cWper, -40 * cHper],
+			[(35 - qa.d_main + 3) * cWper, -40 * cHper + 3 * cWper],
 		],
 		cOunit,
 		theme.lens1
 	);
-	ctxS.stroke([(85 - qa.d_main) * cWper, 10 * cHper], [[(85 - qa.d_main) * cWper, 80 * cHper]], cOunit, theme.lens1);
+	ctxS.stroke([(35 - qa.d_main) * cWper, -1000 * cHper], [[(35 - qa.d_main) * cWper, 1000 * cHper]], cOunit, theme.lens1);
 	ctxS.stroke(
-		[(85 - qa.d_main - 3) * cWper, 80 * cHper - 3 * cWper],
+		[(35 - qa.d_main - 3) * cWper, 40 * cHper - 3 * cWper],
 		[
-			[(85 - qa.d_main) * cWper, 80 * cHper],
-			[(85 - qa.d_main + 3) * cWper, 80 * cHper - 3 * cWper],
+			[(35 - qa.d_main) * cWper, 40 * cHper],
+			[(35 - qa.d_main + 3) * cWper, 40 * cHper - 3 * cWper],
 		],
 		cOunit,
 		theme.lens1
 	);
-	ctxS.fillText('objectif', theme.lens1, 3 * cOunit, (85 - qa.d_main) * cWper, 82 * cHper);
+	ctxS.fillText('objectif', theme.lens1, 2.5 * cOunit, (35 - qa.d_main) * cWper, 42 * cHper);
 
 	// draw second lens
 	ctxS.stroke(
-		[(85 - 3) * cWper, 10 * cHper + 3 * cWper],
+		[(35 - 3) * cWper, -40 * cHper + 3 * cWper],
 		[
-			[85 * cWper, 10 * cHper],
-			[(85 + 3) * cWper, 10 * cHper + 3 * cWper],
+			[35 * cWper, -40 * cHper],
+			[(35 + 3) * cWper, -40 * cHper + 3 * cWper],
 		],
 		cOunit,
 		theme.lens2
 	);
-	ctxS.stroke([85 * cWper, 10 * cHper], [[85 * cWper, 80 * cHper]], cOunit, theme.lens2);
+	ctxS.stroke([35 * cWper, -1000 * cHper], [[35 * cWper, 1000 * cHper]], cOunit, theme.lens2);
 	ctxS.stroke(
-		[(85 - 3) * cWper, 80 * cHper - 3 * cWper],
+		[(35 - 3) * cWper, 40 * cHper - 3 * cWper],
 		[
-			[85 * cWper, 80 * cHper],
-			[(85 + 3) * cWper, 80 * cHper - 3 * cWper],
+			[35 * cWper, 40 * cHper],
+			[(35 + 3) * cWper, 40 * cHper - 3 * cWper],
 		],
 		cOunit,
 		theme.lens2
 	);
-	ctxS.fillText('oculaire', theme.lens2, 3 * cOunit, 85 * cWper, 82 * cHper);
+	ctxS.fillText('oculaire', theme.lens2, 2.5 * cOunit, 35 * cWper, 42 * cHper);
 
-	// draw focal points of first lens
-	ctxS.fillCirc((85 - qa.d_main - +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
-	ctxS.fillText("F'", theme.lens1, 3 * cOunit, (85 - qa.d_main - +qa.lf1) * cWper, 47 * cHper);
-	ctxS.fillCirc((85 - qa.d_main + +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
-	ctxS.fillText('F', theme.lens1, 3 * cOunit, (85 - qa.d_main + +qa.lf1) * cWper, 47 * cHper);
+	// draw key points of first lens
+	ctxS.fillCirc((35 - qa.d_main - +qa.lf1) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint1);
+	ctxS.fillText("F'", theme.focalPoint1, 2.5 * cOunit, (35 - qa.d_main - +qa.lf1) * cWper, 1.75 * cHper);
+	ctxS.fillCirc((35 - qa.d_main + +qa.lf1) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint1);
+	ctxS.fillText('F', theme.focalPoint1, 2.5 * cOunit, (35 - qa.d_main + +qa.lf1) * cWper, 1.75 * cHper);
+	ctxS.fillCirc((35 - qa.d_main) * cWper, 0 * cHper, 0.5 * cOunit, theme.centerPoint1);
+	ctxS.fillText('C', theme.centerPoint1, 2.5 * cOunit, (35 - qa.d_main) * cWper, 1.75 * cHper);
 
-	// draw focal points of second lens
-	ctxS.fillCirc((85 - +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
-	ctxS.fillText("F'", theme.lens2, 3 * cOunit, (85 - +qa.lf2) * cWper, 47 * cHper);
-	ctxS.fillCirc((85 + +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
-	ctxS.fillText('F', theme.lens2, 3 * cOunit, (85 + +qa.lf2) * cWper, 47 * cHper);
+	// draw key points of second lens
+	ctxS.fillCirc((35 - +qa.lf2) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint2);
+	ctxS.fillText("F'", theme.focalPoint2, 2.5 * cOunit, (35 - +qa.lf2) * cWper, 1.75 * cHper);
+	ctxS.fillCirc((35 + +qa.lf2) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint2);
+	ctxS.fillText('F', theme.focalPoint2, 2.5 * cOunit, (35 + +qa.lf2) * cWper, 1.75 * cHper);
+	ctxS.fillCirc(35 * cWper, 0 * cHper, 0.5 * cOunit, theme.centerPoint2);
+	ctxS.fillText('C', theme.centerPoint2, 2.5 * cOunit, 35 * cWper, 1.75 * cHper);
+}
 
+function rays() {
 	/* ~~~ SECTION 2: RAYS COMING FROM THE OBSERVED OBJECT ~~~ */
+	const objectPos = [35 - qa.d_main - qa.d_o * 100, -qa.ho];
+	const di = (qa.d_o * 100 * qa.lf1) / (qa.d_o * 100 - qa.lf1);
+	const image1Pos = [di + (35 - qa.d_main), (qa.ho * di) / (qa.d_o * 100)];
 
+	// first principle ray
+	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[image1Pos[0] * cWper, image1Pos[1] * cHper]], 0.25 * cOunit, theme.rays);
+
+	// second principle ray
+	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[(35 - qa.d_main) * cWper, objectPos[1] * cHper]], 0.25 * cOunit, theme.rays);
+
+
+	// end
+}
+
+function images() {
 	/* ~~~ SECTION 3: IMAGES OF THE OBJECT CREATED BY THE TWO LENSES ~~~ */
 }
 
