@@ -93,7 +93,7 @@ const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
 const cWper = innerWidth / 100;
-const cHper = Math.max(innerHeight - document.getElementById('mo').offsetHeight - 40, innerWidth / 3) / 100;
+const cHper = Math.max(innerHeight - document.getElementById('mo').offsetHeight - 50, innerWidth / 3) / 100;
 const cOunit = cWper * 0.7;
 
 canvas.style.width = innerWidth - 20 + 'px';
