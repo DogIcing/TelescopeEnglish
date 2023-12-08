@@ -83,7 +83,7 @@ const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
 
 const cWper = innerWidth / 100;
-const cHper = 0.6 * innerHeight / 100;
+const cHper = 0.5 * innerHeight / 100;
 const cOunit = cWper * 0.7;
 
 canvas.style.width = innerWidth - 20 + 'px';
