@@ -115,7 +115,7 @@ function refreshCanvas() {
 		cOunit,
 		theme.lens1
 	);
-	ctxS.fillText('objectif', theme.lens1, 4 * cOunit, (85 - qa.d_main) * cWper, 82 * cHper);
+	ctxS.fillText('objectif', theme.lens1, 3 * cOunit, (85 - qa.d_main) * cWper, 82 * cHper);
 
 	// draw second lens
 	ctxS.stroke(
@@ -137,15 +137,19 @@ function refreshCanvas() {
 		cOunit,
 		theme.lens2
 	);
-	ctxS.fillText('oculaire', theme.lens2, 4 * cOunit, 85 * cWper, 82 * cHper);
+	ctxS.fillText('oculaire', theme.lens2, 3 * cOunit, 85 * cWper, 82 * cHper);
 
 	// draw focal points of first lens
 	ctxS.fillCirc((85 - qa.d_main - +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
+	ctxS.fillText("F'", theme.lens1, 3 * cOunit, (85 - qa.d_main - +qa.lf1) * cWper, 47 * cHper);
 	ctxS.fillCirc((85 - qa.d_main + +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
+	ctxS.fillText('F', theme.lens1, 3 * cOunit, (85 - qa.d_main + +qa.lf1) * cWper, 47 * cHper);
 
 	// draw focal points of second lens
 	ctxS.fillCirc((85 - +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
+	ctxS.fillText("F'", theme.lens2, 3 * cOunit, (85 - +qa.lf2) * cWper, 47 * cHper);
 	ctxS.fillCirc((85 + +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
+	ctxS.fillText('F', theme.lens2, 3 * cOunit, (85 + +qa.lf2) * cWper, 47 * cHper);
 }
 
 refreshCanvas();
