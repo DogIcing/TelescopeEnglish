@@ -40,7 +40,7 @@ for (const [key, el] of Object.entries(sliders)) {
 const theme = {
 	lens1: '#AAA',
 	focalPoint1: '#AAA',
-    lens2: '#666',
+	lens2: '#666',
 	focalPoint2: '#666',
 };
 
@@ -59,12 +59,19 @@ const ctxS = {
 		ctx.stroke();
 		if (doFill) ctx.fill();
 	},
-	fillCirc: (center, r, fillStyle) => {
+	fillCirc: (x, y, r, fillStyle) => {
 		ctx.fillStyle = fillStyle;
 		ctx.lineWidth = 0;
 		ctx.beginPath();
-		ctx.arc(center[0], center[1], r, 0, Math.PI * 2, false);
+		ctx.arc(x, y, r, 0, Math.PI * 2, false);
 		ctx.fill();
+	},
+	fillText: (text = 'DEFAULT TEXT', fillStyle = '#000', fontSize = 36, x = 0, y = 0) => {
+		ctx.font = `${fontSize}px Commissioner`;
+		ctx.fillStyle = fillStyle;
+
+		let boundingBox = ctx.measureText(text);
+		ctx.fillText(text, x - boundingBox.width / 2, y + boundingBox.actualBoundingBoxAscent + boundingBox.actualBoundingBoxDescent);
 	},
 };
 
@@ -108,9 +115,7 @@ function refreshCanvas() {
 		cOunit,
 		theme.lens1
 	);
-	// draw focal points of first lens
-	ctxS.fillCirc([(85 - qa.d_main - +qa.lf1) * cWper, 45 * cHper], cOunit, theme.focalPoint1);
-    ctxS.fillCirc([(85 - qa.d_main + +qa.lf1) * cWper, 45 * cHper], cOunit, theme.focalPoint1);
+	ctxS.fillText('objectif', theme.lens1, 4 * cOunit, (85 - qa.d_main) * cWper, 82 * cHper);
 
 	// draw second lens
 	ctxS.stroke(
@@ -132,10 +137,15 @@ function refreshCanvas() {
 		cOunit,
 		theme.lens2
 	);
-    // draw focal points of second lens
-	ctxS.fillCirc([(85 - +qa.lf2) * cWper, 45 * cHper], cOunit, theme.focalPoint2);
-    ctxS.fillCirc([(85 + +qa.lf2) * cWper, 45 * cHper], cOunit, theme.focalPoint2);
+	ctxS.fillText('oculaire', theme.lens2, 4 * cOunit, 85 * cWper, 82 * cHper);
 
+	// draw focal points of first lens
+	ctxS.fillCirc((85 - qa.d_main - +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
+	ctxS.fillCirc((85 - qa.d_main + +qa.lf1) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint1);
+
+	// draw focal points of second lens
+	ctxS.fillCirc((85 - +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
+	ctxS.fillCirc((85 + +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
 }
 
 refreshCanvas();
