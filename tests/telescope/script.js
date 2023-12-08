@@ -114,33 +114,37 @@ canvas.addEventListener(
 	},
 	{ passive: true }
 );
-canvas.addEventListener('touchstart', (e) => {
-	if (e.targetTouches.length == 2) {
-		const oTouch1 = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
-		const oTouch2 = { x: e.targetTouches[1].clientX, y: e.targetTouches[1].clientY };
-		const oDis = Math.sqrt((oTouch1.x - oTouch2.x) ** 2 + (oTouch1.y - oTouch2.y) ** 2);
-		const oZoom = zoom;
+canvas.addEventListener(
+	'touchstart',
+	(e) => {
+		if (e.targetTouches.length == 2) {
+			const oTouch1 = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+			const oTouch2 = { x: e.targetTouches[1].clientX, y: e.targetTouches[1].clientY };
+			const oDis = Math.sqrt((oTouch1.x - oTouch2.x) ** 2 + (oTouch1.y - oTouch2.y) ** 2);
+			const oZoom = zoom;
 
-		function onTouchMove(e) {
-			if (e.targetTouches.length != 2) onTouchEnd();
-			const touch1 = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
-			const touch2 = { x: e.targetTouches[1].clientX, y: e.targetTouches[1].clientY };
-			const dis = Math.sqrt((touch1.x - touch2.x) ** 2 + (touch1.y - touch2.y) ** 2);
+			function onTouchMove(e) {
+				if (e.targetTouches.length != 2) onTouchEnd();
+				const touch1 = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+				const touch2 = { x: e.targetTouches[1].clientX, y: e.targetTouches[1].clientY };
+				const dis = Math.sqrt((touch1.x - touch2.x) ** 2 + (touch1.y - touch2.y) ** 2);
 
-			zoom = oZoom + (dis - oDis) / 128;
-			zoom = Math.min(Math.max(0.1, zoom), 1.5);
+				zoom = oZoom + (dis - oDis) / 128;
+				zoom = Math.min(Math.max(0.1, zoom), 1.5);
 
-			refreshCanvas();
+				refreshCanvas();
+			}
+			function onTouchEnd() {
+				removeEventListener('touchmove', onTouchMove);
+				removeEventListener('touchend', onTouchEnd);
+			}
+
+			addEventListener('touchmove', onTouchMove);
+			addEventListener('touchend', onTouchEnd);
 		}
-		function onTouchEnd() {
-			removeEventListener('touchmove', onTouchMove);
-			removeEventListener('touchend', onTouchEnd);
-		}
-
-		addEventListener('touchmove', onTouchMove);
-		addEventListener('touchend', onTouchEnd);
-	}
-}, { passive: true });
+	},
+	{ passive: true }
+);
 /*
 canvas.addEventListener('touchmove', function (event) {
 	if (event.targetTouches.length == 2) {
@@ -237,9 +241,26 @@ function rays() {
 
 	// first principle ray
 	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[image1Pos[0] * cWper, image1Pos[1] * cHper]], 0.25 * cOunit, theme.rays);
-
 	// second principle ray
-	ctxS.stroke([objectPos[0] * cWper, objectPos[1] * cHper], [[(35 - qa.d_main) * cWper, objectPos[1] * cHper]], 0.25 * cOunit, theme.rays);
+	ctxS.stroke(
+		[objectPos[0] * cWper, objectPos[1] * cHper],
+		[
+			[(35 - qa.d_main) * cWper, objectPos[1] * cHper],
+			[image1Pos[0] * cWper, image1Pos[1] * cHper],
+		],
+		0.25 * cOunit,
+		theme.rays
+	);
+	// third principle ray
+	ctxS.stroke(
+		[objectPos[0] * cWper, objectPos[1] * cHper],
+		[
+			[(35 - qa.d_main) * cWper, image1Pos[1] * cHper],
+			[image1Pos[0] * cWper, image1Pos[1] * cHper],
+		],
+		0.25 * cOunit,
+		theme.rays
+	);
 
 	// end
 }
