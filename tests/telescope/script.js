@@ -81,8 +81,12 @@ const ctxS = {
 
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
-canvas.width = innerWidth;
-canvas.height = innerHeight * 0.7;
+canvas.width = innerWidth * 2;
+canvas.height = innerHeight * 1.4;
+canvas.style.width = '100%';
+//canvas.style.height = '70%';
+const dpi = window.devicePixelRatio;
+ctx.scale(dpi, dpi);
 
 const cWper = canvas.width / 100;
 const cHper = canvas.height / 100;
