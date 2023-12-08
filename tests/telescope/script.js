@@ -81,16 +81,21 @@ const ctxS = {
 
 const canvas = document.getElementsByTagName('canvas')[0];
 const ctx = canvas.getContext('2d');
-canvas.width = innerWidth * 2;
-canvas.height = innerHeight * 1.4;
-canvas.style.width = '100%';
-//canvas.style.height = '70%';
+
+const cWper = innerWidth / 100;
+const cHper = 0.7 * innerHeight / 100;
+const cOunit = cWper * 0.7;
+
+canvas.style.width = innerWidth - 20 + 'px';
+canvas.style.height = cHper * 100 + 'px';
+
 const dpi = window.devicePixelRatio;
+canvas.width = cWper * 100 * dpi;
+canvas.height = cHper * 100 * dpi;
+
 ctx.scale(dpi, dpi);
 
-const cWper = canvas.width / 100;
-const cHper = canvas.height / 100;
-const cOunit = cWper * 0.7;
+
 
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
@@ -99,6 +104,7 @@ const cOunit = cWper * 0.7;
 function refreshCanvas() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+	/* ~~~ SECTION 1: COMPONENTS OF THE TELESCOPE ~~~ */
 	// draw first lens
 	ctxS.stroke(
 		[(85 - qa.d_main - 3) * cWper, 10 * cHper + 3 * cWper],
@@ -154,6 +160,10 @@ function refreshCanvas() {
 	ctxS.fillText("F'", theme.lens2, 3 * cOunit, (85 - +qa.lf2) * cWper, 47 * cHper);
 	ctxS.fillCirc((85 + +qa.lf2) * cWper, 45 * cHper, 0.5 * cOunit, theme.focalPoint2);
 	ctxS.fillText('F', theme.lens2, 3 * cOunit, (85 + +qa.lf2) * cWper, 47 * cHper);
+
+	/* ~~~ SECTION 2: RAYS COMING FROM THE OBSERVED OBJECT ~~~ */
+
+	/* ~~~ SECTION 3: IMAGES OF THE OBJECT CREATED BY THE TWO LENSES ~~~ */
 }
 
 refreshCanvas();
