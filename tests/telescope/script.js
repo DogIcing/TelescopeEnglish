@@ -43,6 +43,15 @@ for (const [key, el] of Object.entries(sliders)) {
 		requestAnimationFrame(refreshCanvas);
 	};
 }
+for (const [key, el] of Object.entries(outputs)) {
+	el.oninput = () => {
+		sliders[key].value = el.value;
+		if (key !== 'ho') qa[key] = el.value;
+		else qa[key] = (el.value * cWper) / cHper;
+
+		requestAnimationFrame(refreshCanvas);
+	};
+}
 
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
