@@ -28,15 +28,15 @@ const qa = {
 	lf1: sliders.lf1.value,
 	lf2: sliders.lf2.value,
 };
-outputs.ho.innerHTML = qa.ho;
-outputs.d_o.innerHTML = qa.d_o;
-outputs.d_main.innerHTML = qa.d_main;
-outputs.lf1.innerHTML = qa.lf1;
-outputs.lf2.innerHTML = qa.lf2;
+outputs.ho.value = qa.ho;
+outputs.d_o.value = qa.d_o;
+outputs.d_main.value = qa.d_main;
+outputs.lf1.value = qa.lf1;
+outputs.lf2.value = qa.lf2;
 
 for (const [key, el] of Object.entries(sliders)) {
 	el.oninput = () => {
-		outputs[key].innerHTML = el.value;
+		outputs[key].value = el.value;
 		if (key !== 'ho') qa[key] = el.value;
 		else qa[key] = (el.value * cWper) / cHper;
 
