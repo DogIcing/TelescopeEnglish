@@ -148,8 +148,8 @@ let mapShift = { x: 0, y: 0 };
 canvas.addEventListener(
 	'wheel',
 	(e) => {
-		zoom -= 0.15 * Math.sign(e.deltaY);
-		zoom = Math.min(Math.max(0.05, zoom), 1.5);
+		zoom -= 0.1 * Math.sign(e.deltaY);
+		zoom = Math.min(Math.max(0.1, zoom), 3);
 		refreshCanvas();
 	},
 	{ passive: true }
@@ -160,8 +160,8 @@ canvas.addEventListener('mousedown', (e) => {
 	function onMouseMove(e) {
 		mapShift.x += (oTouch.x - e.clientX) / zoom;
 		mapShift.y += (oTouch.y - e.clientY) / zoom;
-		mapShift.x = Math.max(Math.min(mapShift.x, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
-		mapShift.y = Math.max(Math.min(mapShift.y, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
+		mapShift.x = Math.max(Math.min(mapShift.x, 4000), -4000);
+		mapShift.y = Math.max(Math.min(mapShift.y, 4000), -4000);
 
 		oTouch = { x: e.clientX, y: e.clientY };
 
@@ -183,8 +183,8 @@ canvas.addEventListener(
 			function onTouchMove(e) {
 				mapShift.x += (oTouch.x - e.targetTouches[0].clientX) / zoom;
 				mapShift.y += (oTouch.y - e.targetTouches[0].clientY) / zoom;
-				mapShift.x = Math.max(Math.min(mapShift.x, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
-				mapShift.y = Math.max(Math.min(mapShift.y, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
+				mapShift.x = Math.max(Math.min(mapShift.x, 4000), -4000);
+				mapShift.y = Math.max(Math.min(mapShift.y, 4000), -4000);
 
 				oTouch = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
 
@@ -210,7 +210,7 @@ canvas.addEventListener(
 				const dis = Math.sqrt((touch1.x - touch2.x) ** 2 + (touch1.y - touch2.y) ** 2);
 
 				zoom = oZoom + (dis - oDis) / 128;
-				zoom = Math.min(Math.max(0.1, zoom), 1.5);
+				zoom = Math.min(Math.max(0.1, zoom), 3);
 
 				refreshCanvas();
 			}
