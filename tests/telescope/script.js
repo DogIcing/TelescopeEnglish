@@ -19,6 +19,7 @@ const chart = {
 	oi: document.getElementById('oi-out'),
 	hi: document.getElementById('hi-out'),
 	gr: document.getElementById('gr-out'),
+	interVisi: document.getElementById('interVisi-out'),
 };
 const qa = {
 	ho: sliders.ho.value,
@@ -167,7 +168,7 @@ function refreshCanvas() {
 	let [objectPos, image1Pos, image2Pos] = rays();
 	images(objectPos, image1Pos, image2Pos);
 
-	updateResultsChart(objectPos, image1Pos, image2Pos);
+	updateResultsChart(objectPos, image2Pos);
 }
 
 function telescope() {
@@ -330,7 +331,7 @@ function rays() {
 		);
 		ctxS.stroke([35 * cWper, image2Pos.y * cHper], [[image2Pos.x * cWper, image2Pos.y * cHper]], 0.25 * cOunit, theme.rays2, [8, 6]);
 
-		return [objectPos, image2Pos];
+		return [objectPos, image1Pos, image2Pos];
 	}
 
 	return [objectPos];
@@ -355,17 +356,23 @@ function images(objectPos, image1Pos, image2Pos) {
 }
 
 function updateResultsChart(objectPos, image2Pos) {
-	if (image2Pos !== undefined) {
+	if (image2Pos !== undefined && isFinite(image2Pos.x)) {
 		chart.oi.innerHTML = Math.abs(image2Pos.x - 35).toFixed(2);
 		chart.hi.innerHTML = Math.abs(image2Pos.y).toFixed(2);
 
 		const beta = (image2Pos.y * (objectPos.x - 35)) / (image2Pos.x - 35);
-		chart.gr.innerHTML = (Math.abs(beta / objectPos.y) * (Math.sign(image2Pos.y * objectPos.y))).toFixed(2);
+		chart.gr.innerHTML = (Math.abs(beta / objectPos.y) * Math.sign(image2Pos.y * objectPos.y)).toFixed(2);
 	} else {
 		chart.oi.innerHTML = '- ';
 		chart.hi.innerHTML = '- ';
 		chart.gr.innerHTML = '- ';
+		chart.interVisi.innerHTML = `\u2204 `;
 	}
+
+	const v1 = (qa.d_main * qa.lf1) / (qa.d_main - qa.lf1) / 100;
+	const v2 = ((qa.d_main - qa.lf2) * qa.lf1) / ((qa.d_main - qa.lf2) - qa.lf1) / 100;
+	if (Math.max(v1, v2) <= 0) chart.interVisi.innerHTML = `\u2204 `;
+	else chart.interVisi.innerHTML = `]${Math.max(Math.min(v1, v2), 0).toFixed(2)}, ${Math.max(Math.max(v1, v2), 0).toFixed(2)}[ `;
 }
 
 refreshCanvas();
