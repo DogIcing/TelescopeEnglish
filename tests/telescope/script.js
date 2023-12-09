@@ -471,7 +471,7 @@ function updateResultsChart(objectPos, image2Pos) {
 	if (Math.max(v1, v2) <= 0) chart.interVisi.innerHTML = `\u2204 `;
 	else {
 		if (35 - qa.d_main + +qa.lf1 > 35 - qa.lf2) {
-			if (isFinite(Math.max(v1, v2))) chart.interVisi.innerHTML = `]${Math.max(v1, v2).toFixed(2)}, Infinty[ `;
+			if (isFinite(Math.max(v1, v2))) chart.interVisi.innerHTML = `]${Math.max(v1, v2).toFixed(2)}, Infinity[ `;
 			else chart.interVisi.innerHTML = `\u2204 `;
 		} else chart.interVisi.innerHTML = `]${Math.min(v1, v2).toFixed(2)}, ${Math.max(v1, v2).toFixed(2)}[ `;
 	}
