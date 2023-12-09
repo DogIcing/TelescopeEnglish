@@ -104,18 +104,37 @@ const ctxS = {
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
 
+function resizeCanvas() {
+	if (document.fullscreenElement) {
+		canvas.className = 'no-select canvas-fullscreen';
+		fullscreen.className = 'no-select fullscreen-icon-fullscreen';
+		canvas.style.width = ((innerWidth - 20) * innerHeight) / (cHper * 100) + 'px';
+		canvasCover.style.width = ((innerWidth - 20) * innerHeight) / (cHper * 100) + 'px';
+		fullscreen.style.left = canvas.getBoundingClientRect().right + 'px';
+		canvas.style.height = innerHeight + 'px';
+		canvasCover.style.height = innerHeight + 'px';
+		fullscreen.style.top = canvas.getBoundingClientRect().bottom + 'px';
+	} else {
+		canvas.className = 'no-select';
+		fullscreen.className = 'no-select';
+		canvas.style.width = innerWidth - 20 + 'px';
+		canvasCover.style.width = innerWidth - 20 + 'px';
+		fullscreen.style.left = canvas.getBoundingClientRect().right + 'px';
+		canvas.style.height = cHper * 100 + 'px';
+		canvasCover.style.height = cHper * 100 + 'px';
+		fullscreen.style.top = canvas.getBoundingClientRect().bottom + 'px';
+	}
+}
+
 const canvas = document.getElementsByTagName('canvas')[0];
-const canvasCover = document.getElementById('canvas-cover');
 const ctx = canvas.getContext('2d');
+const canvasCover = document.getElementById('canvas-cover');
+const fullscreen = document.getElementById('fullscreen');
 
 const cWper = innerWidth / 100;
 const cHper = Math.max(innerHeight - document.getElementById('mo').offsetHeight - 50, innerWidth / 3) / 100;
 const cOunit = cWper * 0.7;
-
-canvas.style.width = innerWidth - 20 + 'px';
-canvasCover.style.width = innerWidth - 20 + 'px';
-canvas.style.height = cHper * 100 + 'px';
-canvasCover.style.height = cHper * 100 + 'px';
+resizeCanvas();
 
 const dpi = window.devicePixelRatio;
 canvas.width = cWper * 100 * dpi;
@@ -215,9 +234,22 @@ function removeCanvasCover() {
 		canvasCover.remove();
 	}, 500);
 
+	fullscreen.removeAttribute('hidden');
+
 	removeEventListener('click', removeCanvasCover);
 	removeEventListener('touchstart', removeCanvasCover);
 }
+
+fullscreen.addEventListener('click', requestFullscreen);
+fullscreen.addEventListener('touchstart', requestFullscreen, { passive: true });
+function requestFullscreen() {
+	if (document.fullscreenElement) {
+		document.exitFullscreen();
+	} else {
+		document.getElementById('canvas-fullscreen-group').requestFullscreen();
+	}
+}
+window.addEventListener('resize', resizeCanvas);
 
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */

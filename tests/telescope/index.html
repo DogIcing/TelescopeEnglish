@@ -4,6 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>telescope test</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 		<style>
 			@import url('https://fonts.googleapis.com/css2?family=Commissioner&display=swap');
 			html,
@@ -21,10 +22,12 @@
 				touch-action: none;
 
 				background-color: #fff;
-
-				-webkit-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
+			}
+			.canvas-fullscreen {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
 			}
 			hr {
 				width: 60%;
@@ -34,6 +37,29 @@
 			}
 			h4 {
 				margin: 0 0 4px 0;
+			}
+
+			.no-select {
+				-webkit-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+
+			#fullscreen {
+				position: absolute;
+				transform: translate(-100%, -100%);
+
+				color: white;
+				background-color: #000a;
+				padding: 5px;
+			}
+			.fullscreen-icon-fullscreen {
+				left: unset !important;
+				top: unset !important;
+				bottom: 0%;
+				right: 0%;
+				transform: none !important;
+				z-index: 1;
 			}
 
 			#canvas-cover {
@@ -113,10 +139,14 @@
 		</style>
 	</head>
 	<body>
-		<div id="canvas-cover">
-			<div>Move the canvas with your fingers or with your mouse and mouse wheel</div>
+		<div id="canvas-fullscreen-group">
+			<div id="canvas-cover">
+				<div>Move the canvas with your fingers or with your mouse and mouse wheel</div>
+			</div>
+			<span id="fullscreen" class="no-select" hidden><i class="fa-solid fa-expand"></i></span>
+			<canvas class="no-select">it looks like your browser does not support HTML5 yet.</canvas>
 		</div>
-		<canvas>it looks like your browser does not support HTML5 yet.</canvas>
+
 		<div id="mo" class="flex" style="justify-content: space-between">
 			<div id="variables-div">
 				<h4>VARIABLES:</h4>
