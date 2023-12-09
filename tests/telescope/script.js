@@ -470,10 +470,10 @@ function updateResultsChart(objectPos, image2Pos) {
 	const v2 = ((qa.d_main - qa.lf2) * qa.lf1) / (qa.d_main - qa.lf2 - qa.lf1) / 100;
 	if (Math.max(v1, v2) <= 0) chart.interVisi.innerHTML = `\u2204 `;
 	else {
-		if (35 - qa.d_main + qa.lf1 > 35 - qa.lf2) {
+		if (35 - qa.d_main + +qa.lf1 > 35 - qa.lf2) {
 			if (isFinite(Math.max(v1, v2))) chart.interVisi.innerHTML = `]${Math.max(v1, v2).toFixed(2)}, Infinty[ `;
 			else chart.interVisi.innerHTML = `\u2204 `;
-		} else chart.interVisi.innerHTML = `]${Math.max(Math.min(v1, v2), -100000).toFixed(2)}, ${Math.max(Math.max(v1, v2), -100000).toFixed(2)}[ `;
+		} else chart.interVisi.innerHTML = `]${Math.min(v1, v2).toFixed(2)}, ${Math.max(v1, v2).toFixed(2)}[ `;
 	}
 }
 
