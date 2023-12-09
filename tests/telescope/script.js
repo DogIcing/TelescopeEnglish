@@ -183,8 +183,8 @@ canvas.addEventListener(
 			function onTouchMove(e) {
 				mapShift.x += (oTouch.x - e.targetTouches[0].clientX) / zoom;
 				mapShift.y += (oTouch.y - e.targetTouches[0].clientY) / zoom;
-				mapShift.x = Math.max(Math.min(mapShift.x, 4000), -4000);
-				mapShift.y = Math.max(Math.min(mapShift.y, 4000), -4000);
+				mapShift.x = Math.max(Math.min(mapShift.x, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
+				mapShift.y = Math.max(Math.min(mapShift.y, 4000 - (50 * cWper) / zoom), -4000 + (50 * cWper) / zoom);
 
 				oTouch = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
 
