@@ -69,9 +69,9 @@ const ctxS = {
 		ctx.strokeStyle = strokeStyle;
 		ctx.setLineDash(lineDash);
 		ctx.beginPath();
-		ctx.moveTo(startPoint[0] * zoom, startPoint[1] * zoom);
+		ctx.moveTo((startPoint[0] - mapShift.x) * zoom, (startPoint[1] - mapShift.y) * zoom);
 		pointsArr.forEach((point) => {
-			ctx.lineTo(point[0] * zoom, point[1] * zoom);
+			ctx.lineTo((point[0] - mapShift.x) * zoom, (point[1] - mapShift.y) * zoom);
 		});
 		ctx.stroke();
 	},
@@ -79,7 +79,7 @@ const ctxS = {
 		ctx.fillStyle = fillStyle;
 		ctx.lineWidth = 0;
 		ctx.beginPath();
-		ctx.arc(x * zoom, y * zoom, r * zoom, 0, Math.PI * 2, false);
+		ctx.arc((x - mapShift.x) * zoom, (y - mapShift.y) * zoom, r * zoom, 0, Math.PI * 2, false);
 		ctx.fill();
 	},
 	fillText: (text = 'DEFAULT TEXT', fillStyle = '#000', fontSize = 36, x = 0, y = 0) => {
@@ -87,7 +87,7 @@ const ctxS = {
 		ctx.fillStyle = fillStyle;
 
 		let boundingBox = ctx.measureText(text);
-		ctx.fillText(text, (x - boundingBox.width / 2) * zoom, (y + boundingBox.actualBoundingBoxAscent + boundingBox.actualBoundingBoxDescent) * zoom);
+		ctx.fillText(text, (x - boundingBox.width / 2 - mapShift.x) * zoom, (y + boundingBox.actualBoundingBoxAscent + boundingBox.actualBoundingBoxDescent - mapShift.y) * zoom);
 	},
 };
 
@@ -116,19 +116,57 @@ ctx.scale(dpi, dpi);
 ctx.translate(cWper * 50, cHper * 50);
 
 let zoom = 1;
+let mapShift = { x: 100, y: 100 };
 canvas.addEventListener(
 	'wheel',
 	(e) => {
-		zoom -= 0.1 * Math.sign(e.deltaY);
-		zoom = Math.min(Math.max(0.1, zoom), 1.5);
+		zoom -= 0.15 * Math.sign(e.deltaY);
+		zoom = Math.min(Math.max(0.05, zoom), 1.5);
 		refreshCanvas();
 	},
 	{ passive: true }
 );
+canvas.addEventListener('mousedown', (e) => {
+	console.log(e);
+	let oTouch = { x: e.clientX, y: e.clientY };
+
+	function onMouseMove(e) {
+		mapShift.x += (oTouch.x - e.clientX) / zoom;
+		mapShift.y += (oTouch.y - e.clientY) / zoom;
+
+		oTouch = { x: e.clientX, y: e.clientY };
+
+		refreshCanvas();
+	}
+	function onMouseUp() {
+		removeEventListener('mousemove', onMouseMove);
+		removeEventListener('mouseup', onMouseUp);
+	}
+	addEventListener('mousemove', onMouseMove);
+	addEventListener('mouseup', onMouseUp);
+});
 canvas.addEventListener(
 	'touchstart',
 	(e) => {
-		if (e.targetTouches.length == 2) {
+		if (e.targetTouches.length == 1) {
+			let oTouch = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+
+			function onTouchMove(e) {
+				mapShift.x += (oTouch.x - e.targetTouches[0].clientX) / zoom;
+				mapShift.y += (oTouch.y - e.targetTouches[0].clientY) / zoom;
+
+				oTouch = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
+
+				refreshCanvas();
+			}
+			function onTouchEnd() {
+				removeEventListener('touchmove', onTouchMove);
+				removeEventListener('touchend', onTouchEnd);
+			}
+
+			addEventListener('touchmove', onTouchMove);
+			addEventListener('touchend', onTouchEnd);
+		} else if (e.targetTouches.length == 2) {
 			const oTouch1 = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
 			const oTouch2 = { x: e.targetTouches[1].clientX, y: e.targetTouches[1].clientY };
 			const oDis = Math.sqrt((oTouch1.x - oTouch2.x) ** 2 + (oTouch1.y - oTouch2.y) ** 2);
@@ -158,7 +196,7 @@ canvas.addEventListener(
 );
 
 canvasCover.addEventListener('click', removeCanvasCover);
-canvasCover.addEventListener('touchstart', removeCanvasCover);
+canvasCover.addEventListener('touchstart', removeCanvasCover, { passive: true });
 function removeCanvasCover() {
 	canvasCover.style.opacity = 0;
 	setTimeout(() => {
@@ -189,7 +227,7 @@ function refreshCanvas() {
 function telescope() {
 	/* ~~~ SECTION 1: COMPONENTS OF THE TELESCOPE ~~~ */
 	// draw horizon
-	ctxS.stroke([-10000, 0], [[10000, 0]], 0.2 * cOunit, '#000');
+	ctxS.stroke([-20000, 0], [[20000, 0]], 0.2 * cOunit, '#000');
 
 	// draw first lens
 	ctxS.stroke(
