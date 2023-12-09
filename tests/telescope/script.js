@@ -133,6 +133,8 @@ canvas.addEventListener('mousedown', (e) => {
 	function onMouseMove(e) {
 		mapShift.x += (oTouch.x - e.clientX) / zoom;
 		mapShift.y += (oTouch.y - e.clientY) / zoom;
+		mapShift.x = Math.max(Math.min(mapShift.x, 4000), -4000);
+		mapShift.y = Math.max(Math.min(mapShift.y, 4000), -4000);
 
 		oTouch = { x: e.clientX, y: e.clientY };
 
@@ -154,6 +156,8 @@ canvas.addEventListener(
 			function onTouchMove(e) {
 				mapShift.x += (oTouch.x - e.targetTouches[0].clientX) / zoom;
 				mapShift.y += (oTouch.y - e.targetTouches[0].clientY) / zoom;
+				mapShift.x = Math.max(Math.min(mapShift.x, 4000), -4000);
+				mapShift.y = Math.max(Math.min(mapShift.y, 4000), -4000);
 
 				oTouch = { x: e.targetTouches[0].clientX, y: e.targetTouches[0].clientY };
 
