@@ -159,8 +159,12 @@ canvas.addEventListener(
 
 canvasCover.addEventListener('click', removeCanvasCover);
 canvasCover.addEventListener('touchstart', removeCanvasCover);
-function removeCanvasCover () {
+function removeCanvasCover() {
 	canvasCover.style.opacity = 0;
+	setTimeout(() => {
+		canvasCover.remove();
+	}, 500);
+
 	removeEventListener('click', removeCanvasCover);
 	removeEventListener('touchstart', removeCanvasCover);
 }
@@ -381,7 +385,7 @@ function updateResultsChart(objectPos, image2Pos) {
 	}
 
 	const v1 = (qa.d_main * qa.lf1) / (qa.d_main - qa.lf1) / 100;
-	const v2 = ((qa.d_main - qa.lf2) * qa.lf1) / ((qa.d_main - qa.lf2) - qa.lf1) / 100;
+	const v2 = ((qa.d_main - qa.lf2) * qa.lf1) / (qa.d_main - qa.lf2 - qa.lf1) / 100;
 	if (Math.max(v1, v2) <= 0) chart.interVisi.innerHTML = `\u2204 `;
 	else {
 		if (35 - qa.d_main + qa.lf1 > 35 - qa.lf2) {
