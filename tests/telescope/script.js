@@ -136,7 +136,6 @@ canvas.addEventListener(
 	{ passive: true }
 );
 canvas.addEventListener('mousedown', (e) => {
-	console.log(e);
 	let oTouch = { x: e.clientX, y: e.clientY };
 
 	function onMouseMove(e) {
@@ -262,7 +261,7 @@ function telescope() {
 		cOunit,
 		theme.lens1
 	);
-	ctxS.fillText('objectif', theme.lens1, 2.5 * cOunit, (35 - qa.d_main) * cWper, 42 * cHper);
+	ctxS.fillText('objectif', '#000', 2.5 * cOunit, (35 - qa.d_main) * cWper, 42 * cHper);
 
 	// draw second lens
 	ctxS.stroke(
@@ -284,7 +283,7 @@ function telescope() {
 		cOunit,
 		theme.lens2
 	);
-	ctxS.fillText('oculaire', theme.lens2, 2.5 * cOunit, 35 * cWper, 42 * cHper);
+	ctxS.fillText('oculaire', '#000', 2.5 * cOunit, 35 * cWper, 42 * cHper);
 
 	// draw key points of first lens
 	ctxS.fillCirc((35 - qa.d_main - +qa.lf1) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint1);
