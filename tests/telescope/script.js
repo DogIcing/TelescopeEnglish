@@ -116,7 +116,7 @@ ctx.scale(dpi, dpi);
 ctx.translate(cWper * 50, cHper * 50);
 
 let zoom = 1;
-let mapShift = { x: 100, y: 100 };
+let mapShift = { x: 0, y: 0 };
 canvas.addEventListener(
 	'wheel',
 	(e) => {
