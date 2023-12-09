@@ -293,7 +293,7 @@ function telescope() {
 		cOunit,
 		theme.lens1
 	);
-	ctxS.fillText('objectif', '#000', 2.5 * cOunit, (35 - qa.d_main) * cWper, 42 * cHper);
+	ctxS.fillText('objective', '#000', 2.5 * cOunit, (35 - qa.d_main) * cWper, 42 * cHper);
 
 	// draw second lens
 	ctxS.stroke(
@@ -315,7 +315,7 @@ function telescope() {
 		cOunit,
 		theme.lens2
 	);
-	ctxS.fillText('oculaire', '#000', 2.5 * cOunit, 35 * cWper, 42 * cHper);
+	ctxS.fillText('eyepiece', '#000', 2.5 * cOunit, 35 * cWper, 42 * cHper);
 
 	// draw key points of first lens
 	ctxS.fillCirc((35 - qa.d_main - +qa.lf1) * cWper, 0 * cHper, 0.5 * cOunit, theme.focalPoint1);
