@@ -251,7 +251,7 @@ function telescope() {
 		cOunit,
 		theme.lens1
 	);
-	ctxS.stroke([(35 - qa.d_main) * cWper, -1000 * cHper], [[(35 - qa.d_main) * cWper, 1000 * cHper]], cOunit, theme.lens1);
+	ctxS.stroke([(35 - qa.d_main) * cWper, -5000 * cHper], [[(35 - qa.d_main) * cWper, 5000 * cHper]], cOunit, theme.lens1);
 	ctxS.stroke(
 		[(35 - qa.d_main - 3) * cWper, 40 * cHper - 3 * cWper],
 		[
@@ -273,7 +273,7 @@ function telescope() {
 		cOunit,
 		theme.lens2
 	);
-	ctxS.stroke([35 * cWper, -1000 * cHper], [[35 * cWper, 1000 * cHper]], cOunit, theme.lens2);
+	ctxS.stroke([35 * cWper, -5000 * cHper], [[35 * cWper, 5000 * cHper]], cOunit, theme.lens2);
 	ctxS.stroke(
 		[(35 - 3) * cWper, 40 * cHper - 3 * cWper],
 		[
