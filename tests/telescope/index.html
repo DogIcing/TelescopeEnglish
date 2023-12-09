@@ -36,6 +36,38 @@
 				margin: 0 0 4px 0;
 			}
 
+			#canvas-cover {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+
+				display: flex;
+				flex-wrap: wrap;
+				align-content: center;
+				justify-content: center;
+
+				transition-duration: 0.5s;
+
+				background-color: #000c;
+			}
+			#canvas-cover div {
+				max-width: 50%;
+				text-align: center;
+				color: #FFF;
+				animation: fade 3s ease-in-out infinite;
+			}
+			@keyframes fade {
+				0% {
+					opacity: 1;
+				}
+				50% {
+					opacity: 0.5;
+				}
+				100% {
+					opacity: 1;
+				}
+			}
+
 			.slider {
 				margin: auto 4px;
 			}
@@ -57,6 +89,9 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
 	</head>
 	<body>
+		<div id="canvas-cover">
+			<div>You may pitch and zoom or use your mouse wheel to zoom on this canvas.</div>
+		</div>
 		<canvas>it looks like your browser does not support HTML5 yet.</canvas>
 		<div id="mo" class="flex">
 			<div style="min-width: 50%">

@@ -96,6 +96,7 @@ const ctxS = {
 /* ~~~~~~~~~ */
 
 const canvas = document.getElementsByTagName('canvas')[0];
+const canvasCover = document.getElementById('canvas-cover');
 const ctx = canvas.getContext('2d');
 
 const cWper = innerWidth / 100;
@@ -103,7 +104,9 @@ const cHper = Math.max(innerHeight - document.getElementById('mo').offsetHeight 
 const cOunit = cWper * 0.7;
 
 canvas.style.width = innerWidth - 20 + 'px';
+canvasCover.style.width = innerWidth - 20 + 'px';
 canvas.style.height = cHper * 100 + 'px';
+canvasCover.style.height = cHper * 100 + 'px';
 
 const dpi = window.devicePixelRatio;
 canvas.width = cWper * 100 * dpi;
@@ -153,6 +156,14 @@ canvas.addEventListener(
 	},
 	{ passive: true }
 );
+
+canvasCover.addEventListener('click', removeCanvasCover);
+canvasCover.addEventListener('touchstart', removeCanvasCover);
+function removeCanvasCover () {
+	canvasCover.style.opacity = 0;
+	removeEventListener('click', removeCanvasCover);
+	removeEventListener('touchstart', removeCanvasCover);
+}
 
 /* ~~~~~~~~~ */
 /* ~~~~~~~~~ */
